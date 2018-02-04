@@ -1,0 +1,42 @@
+%SETVALUE();
+%SETLMI();
+
+%c = mat2dec(RotorCONTROLLER,eye(3));
+%c = []; задать самим размерность 
+%с = [] все нули кроие последнего 36+1+32
+c = zeros([1,69]);
+c(1,69) = 1;
+%c = mat2dec(Rotor,sY,sZ,slambda);
+
+[copt,xopt] = mincx(Rotor,c);
+
+Y = dec2mat(Rotor, xopt, 1);
+Z = dec2mat(Rotor, xopt, 2);
+lambda = dec2mat(Rotor, xopt, 3);
+
+W = Z*Y^-1;
+
+
+
+
+%[tmin, xfeas] = feasp(Pr);
+
+%X11 = dec2mat(Pr, xfeas, 1);
+%Y11 = dec2mat(Pr, xfeas, 2);
+
+% ¬осстановим матрицу Y and X = Y^-1
+
+%V = Y11 - X11^(-1);
+%Y = [Y11, V; V V];
+%X = Y^(-1);
+
+%ѕодставим Y найдем Q
+
+%A0 = [A zeros(size(A, 1),4); zeros(4, size(A, 2)) zeros(4, 4)];
+%B0 = [zeros(size(B, 1),4) B; eye(4, 4) zeros(4, size(B, 2))];
+%C0 = [zeros(4, size(C, 2)) eye(4, 4); C zeros(size(C, 1), 4)]; 
+%XI = A0*Y + Y'*A0' + 2*beta*X;
+%P = C0*Y;
+%Q = B0';
+%Theta = basiclmi(XI, Q, P, 'Xmin');
+

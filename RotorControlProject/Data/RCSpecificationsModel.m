@@ -41,7 +41,6 @@ SpecificModel = struct( 'm',    0, ...
 % alpha - Угол поворота ротора относительно оси x
 % beta  - Угол поворота ротора относительно оси y
 % x, y  - Координаты центра масс
-
 %RotorPosition = struct(alpha, 0, beta, 0, x, 0, y, 0);
 
 %RotorParameters = struct(RotorPosition, 0, SpecificModel, 0);

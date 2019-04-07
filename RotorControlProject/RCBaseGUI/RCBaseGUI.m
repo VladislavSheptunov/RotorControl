@@ -72,16 +72,7 @@ close()
 
 % --- Executes on button press in btn_animation.
 function btn_animation_Callback(hObject, eventdata, handles)
-handles = guihandles(hObject);
-%hand.adt_alpha = 1;
-set(handles.edt_alpha, 'String', 1);
-
-%alpha = str2double(get(handles.edt_alpha,'String'));
-%alpha = 2;
-%guidata(hObject, handles);
-%close();
-%RCParameters = RCBaseGUIPullOfParameters(handles);
-%CheckOnExeption(RCParameters);
+close();
 
 % --- Executes on button press in btn_clear.
 function btn_clear_Callback(hObject, eventdata, handles)
@@ -92,11 +83,10 @@ close()
 
 % --- Executes on button press in btn_enter.
 function btn_enter_Callback(hObject, eventdata, handles)
-% hObject    handle to btn_clear (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-close()
+RCParameters = RCBaseGUIPullOfParameters(guihandles(hObject));
 
+[t, ksi] = RCStabilisation(RCParameters);
+showGraphRC(t, ksi);
 
 % --- Executes on button press in btn_show_trajectory.
 function btn_show_trajectory_Callback(hObject, eventdata, handles)

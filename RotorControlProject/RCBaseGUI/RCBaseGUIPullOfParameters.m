@@ -1,4 +1,4 @@
-function [ RotorParameters ] = RCBaseGUIPullOfParameters( handles )
+function [RotorParameters] = RCBaseGUIPullOfParameters(handles)
 
 RotorParameters.RotorPosition.alpha = str2double(get(handles.edt_alpha,'String'));
 RotorParameters.RotorPosition.beta = str2double(get(handles.edt_beta,'String'));

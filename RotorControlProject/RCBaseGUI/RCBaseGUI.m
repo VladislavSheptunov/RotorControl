@@ -57,6 +57,22 @@ handles.output = hObject;
 % Update handles structure
 guidata(hObject, handles);
 
+handle = guihandles(hObject);
+
+
+image = imread('ber.jpg');
+
+%a = handle.btn_exit.InnerPosition;
+
+%w = a[3];
+imresize(image, 1);
+
+%h = uicontrol;
+set(handle.btn_exit,'cdata',image);
+
+%set(handle.btn_exit, 'CData', image);
+%set(handle.btn_show_trajectory, 'Visible', 'off');
+
 % --- Outputs from this function are returned to the command line.
 function varargout = RCBaseGUI_OutputFcn(hObject, eventdata, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
@@ -72,6 +88,9 @@ close()
 
 % --- Executes on button press in btn_animation.
 function btn_animation_Callback(hObject, eventdata, handles)
+handles = guihandles(hObject);
+
+set(handles.btn_clear, 'Visible', 'off');
 close();
 
 % --- Executes on button press in btn_clear.
@@ -83,14 +102,23 @@ close()
 
 % --- Executes on button press in btn_enter.
 function btn_enter_Callback(hObject, eventdata, handles)
+global g_stabilisation;
+handles = guihandles(hObject);
+
 RCParameters = RCBaseGUIPullOfParameters(guihandles(hObject));
 
 [t, ksi] = RCStabilisation(RCParameters);
-showGraphRC(t, ksi);
+
+g_stabilisation.vecT = t;
+g_stabilisation.vecKSI = ksi;
+
+set(handles.btn_show_trajectory, 'Visible', 'on');
 
 % --- Executes on button press in btn_show_trajectory.
 function btn_show_trajectory_Callback(hObject, eventdata, handles)
-close()
+global g_stabilisation;
+
+showGraphRC(g_stabilisation.vecT, g_stabilisation.vecKSI);
 
 function edt_alpha_Callback(hObject, eventdata, handles)
 % hObject    handle to edt_alpha (see GCBO)

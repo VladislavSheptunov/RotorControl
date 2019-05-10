@@ -43,8 +43,49 @@ else
 end
 % End initialization code - DO NOT EDIT
 
-% --- Executes just before RCBaseGUI is made visible.
 function RCBaseGUI_OpeningFcn(hObject, handles, varargin)
+warning('off','MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame');
+    
+handles = guihandles(hObject);
+
+jFrame=get(handle(handles.RCBaseGUI), 'javaframe');
+jicon=javax.swing.ImageIcon('D:\RotorControl\RotorControlProject\Resource\emp.jpg');
+jFrame.setFigureIcon(jicon);
+
+[im, ~, alpha] = imread('D:\RotorControl\RotorControlProject\Resource\rotor.png');
+panelAxis = imshow(im);
+set(panelAxis, 'AlphaData', alpha);
+
+set(handles.btn_modulation, 'Visible', 'off');
+set(handles.btn_animation, 'Visible', 'off');
+
+handles.output = hObject;
+
+% Update handles structure
+guidata(hObject, handles);
+
+
+
+
+    %a = handles.btn_exit.InnerPosition;
+
+    %b = a(3);
+    %imresize(image, 1);
+
+    %h = uicontrol;
+    %set(h,'cdata',image);
+
+    %set(handle.btn_exit, 'CData', image);
+    %set(handle.btn_show_trajectory, 'Visible', 'off');
+
+
+
+    
+
+
+
+% --- Executes just before RCBaseGUI is made visible.
+%function RCBaseGUI_OpeningFcn(hObject, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -52,23 +93,23 @@ function RCBaseGUI_OpeningFcn(hObject, handles, varargin)
 % varargin   command line arguments to RCBaseGUI (see VARARGIN)
 
 % Choose default command line output for RCBaseGUI
-handles.output = hObject;
+%handles.output = hObject;
 
 % Update handles structure
-guidata(hObject, handles);
+%guidata(hObject, handles);
 
-handle = guihandles(hObject);
+%handle = guihandles(hObject);
 
 
-image = imread('ber.jpg');
+%image = imread('ber.jpg');
 
 %a = handle.btn_exit.InnerPosition;
 
 %w = a[3];
-imresize(image, 1);
+%imresize(image, 1);
 
 %h = uicontrol;
-set(handle.btn_exit,'cdata',image);
+%set(handle.btn_exit,'cdata',image);
 
 %set(handle.btn_exit, 'CData', image);
 %set(handle.btn_show_trajectory, 'Visible', 'off');
@@ -84,7 +125,7 @@ function varargout = RCBaseGUI_OutputFcn(hObject, eventdata, handles)
 varargout{1} = handles.output;
 
 function btn_exit_Callback(hObject, eventdata, handles)
-close()
+close();
 
 % --- Executes on button press in btn_animation.
 function btn_animation_Callback(hObject, eventdata, handles)
@@ -95,115 +136,152 @@ close();
 
 % --- Executes on button press in btn_clear.
 function btn_clear_Callback(hObject, eventdata, handles)
-% hObject    handle to btn_clear (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-close()
+RCParameters = GetRCParameters();
+
+RCParameters.SpecificModel.m  = 0.0;
+RCParameters.SpecificModel.S0 = 0.0;
+RCParameters.SpecificModel.It = 0.0;
+RCParameters.SpecificModel.L0 = 0.0;
+RCParameters.SpecificModel.l1 = 0.0;
+RCParameters.SpecificModel.l2 = 0.0;
+RCParameters.SpecificModel.J  = 0.0;
+RCParameters.SpecificModel.Jz = 0.0;
+RCParameters.SpecificModel.w  = 0.0;
+
+SetRCParameters(RCParameters);
+
+RCBaseGUIPushOfParameters(guihandles(hObject));
+
+function btn_default_Callback(hObject, eventdata, handles)
+RCParameters = GetRCParameters();
+
+RCParameters.SpecificModel.m  = 13.5;
+RCParameters.SpecificModel.S0 = 0.0006;
+RCParameters.SpecificModel.It = 1.4;
+RCParameters.SpecificModel.L0 = 0.007;
+RCParameters.SpecificModel.l1 = 0.3;
+RCParameters.SpecificModel.l2 = 0.3;
+RCParameters.SpecificModel.J  = 0.756;
+RCParameters.SpecificModel.Jz = 0.0269;
+RCParameters.SpecificModel.w  = 523.6;
+
+SetRCParameters(RCParameters);
+
+RCBaseGUIPushOfParameters(guihandles(hObject));
 
 % --- Executes on button press in btn_enter.
 function btn_enter_Callback(hObject, eventdata, handles)
-global g_stabilisation;
+%global g_stabilisation;
 handles = guihandles(hObject);
 
 RCParameters = RCBaseGUIPullOfParameters(guihandles(hObject));
+SetRCParameters(RCParameters);
 
-[t, ksi] = RCStabilisation(RCParameters);
+%[t, ksi] = RCStabilisation(RCParameters);
 
-g_stabilisation.vecT = t;
-g_stabilisation.vecKSI = ksi;
+%g_stabilisation.vecT = t;
+%g_stabilisation.vecKSI = ksi;
 
-set(handles.btn_show_trajectory, 'Visible', 'on');
+set(handles.btn_modulation, 'Visible', 'on');
 
 % --- Executes on button press in btn_show_trajectory.
-function btn_show_trajectory_Callback(hObject, eventdata, handles)
-global g_stabilisation;
+function btn_modulation_Callback(hObject, eventdata, handles)
+set(handles.btn_modulation, 'Visible', 'off');
 
-showGraphRC(g_stabilisation.vecT, g_stabilisation.vecKSI);
+open('RCModulationGUI.fig');
 
-function edt_alpha_Callback(hObject, eventdata, handles)
-% hObject    handle to edt_alpha (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+%global g_stabilisation;
 
-% Hints: get(hObject,'String') returns contents of edt_alpha as text
-%        str2double(get(hObject,'String')) returns contents of edt_alpha as a double
+%showGraphRC(g_stabilisation.vecT, g_stabilisation.vecKSI);
 
+function btn_about_Callback(hObject, eventdata, handles)
 
-% --- Executes during object creation, after setting all properties.
-function edt_alpha_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edt_alpha (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
+close()
 
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-function edt_beta_Callback(hObject, eventdata, handles)
-% hObject    handle to edt_beta (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of edt_beta as text
-%        str2double(get(hObject,'String')) returns contents of edt_beta as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function edt_beta_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edt_beta (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-function edt_x_Callback(hObject, eventdata, handles)
-% hObject    handle to edt_x (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of edt_x as text
-%        str2double(get(hObject,'String')) returns contents of edt_x as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function edt_x_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edt_x (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-function edt_y_Callback(hObject, eventdata, handles)
-% hObject    handle to edt_y (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of edt_y as text
-%        str2double(get(hObject,'String')) returns contents of edt_y as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function edt_y_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edt_y (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
+% function edt_alpha_Callback(hObject, eventdata, handles)
+% % hObject    handle to edt_alpha (see GCBO)
+% % eventdata  reserved - to be defined in a future version of MATLAB
+% % handles    structure with handles and user data (see GUIDATA)
+% 
+% % Hints: get(hObject,'String') returns contents of edt_alpha as text
+% %        str2double(get(hObject,'String')) returns contents of edt_alpha as a double
+% 
+% 
+% % --- Executes during object creation, after setting all properties.
+% function edt_alpha_CreateFcn(hObject, eventdata, handles)
+% % hObject    handle to edt_alpha (see GCBO)
+% % eventdata  reserved - to be defined in a future version of MATLAB
+% % handles    empty - handles not created until after all CreateFcns called
+% 
+% % Hint: edit controls usually have a white background on Windows.
+% %       See ISPC and COMPUTER.
+% if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+%     set(hObject,'BackgroundColor','white');
+% end
+% 
+% function edt_beta_Callback(hObject, eventdata, handles)
+% % hObject    handle to edt_beta (see GCBO)
+% % eventdata  reserved - to be defined in a future version of MATLAB
+% % handles    structure with handles and user data (see GUIDATA)
+% 
+% % Hints: get(hObject,'String') returns contents of edt_beta as text
+% %        str2double(get(hObject,'String')) returns contents of edt_beta as a double
+% 
+% 
+% % --- Executes during object creation, after setting all properties.
+% function edt_beta_CreateFcn(hObject, eventdata, handles)
+% % hObject    handle to edt_beta (see GCBO)
+% % eventdata  reserved - to be defined in a future version of MATLAB
+% % handles    empty - handles not created until after all CreateFcns called
+% 
+% % Hint: edit controls usually have a white background on Windows.
+% %       See ISPC and COMPUTER.
+% if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+%     set(hObject,'BackgroundColor','white');
+% end
+% 
+% function edt_x_Callback(hObject, eventdata, handles)
+% % hObject    handle to edt_x (see GCBO)
+% % eventdata  reserved - to be defined in a future version of MATLAB
+% % handles    structure with handles and user data (see GUIDATA)
+% 
+% % Hints: get(hObject,'String') returns contents of edt_x as text
+% %        str2double(get(hObject,'String')) returns contents of edt_x as a double
+% 
+% 
+% % --- Executes during object creation, after setting all properties.
+% function edt_x_CreateFcn(hObject, eventdata, handles)
+% % hObject    handle to edt_x (see GCBO)
+% % eventdata  reserved - to be defined in a future version of MATLAB
+% % handles    empty - handles not created until after all CreateFcns called
+% 
+% % Hint: edit controls usually have a white background on Windows.
+% %       See ISPC and COMPUTER.
+% if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+%     set(hObject,'BackgroundColor','white');
+% end
+% 
+% 
+% function edt_y_Callback(hObject, eventdata, handles)
+% % hObject    handle to edt_y (see GCBO)
+% % eventdata  reserved - to be defined in a future version of MATLAB
+% % handles    structure with handles and user data (see GUIDATA)
+% 
+% % Hints: get(hObject,'String') returns contents of edt_y as text
+% %        str2double(get(hObject,'String')) returns contents of edt_y as a double
+% 
+% 
+% % --- Executes during object creation, after setting all properties.
+% function edt_y_CreateFcn(hObject, eventdata, handles)
+% % hObject    handle to edt_y (see GCBO)
+% % eventdata  reserved - to be defined in a future version of MATLAB
+% % handles    empty - handles not created until after all CreateFcns called
+% 
+% % Hint: edit controls usually have a white background on Windows.
+% %       See ISPC and COMPUTER.
+% if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+%     set(hObject,'BackgroundColor','white');
+% end
 
 
 function edt_m_Callback(hObject, eventdata, handles)
@@ -410,7 +488,6 @@ function edt_w_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
 
 % --- Executes when user attempts to close RCBaseGUI.
 function RCBaseGUI_CloseRequestFcn(hObject, eventdata, handles)

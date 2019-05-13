@@ -51,27 +51,24 @@ handles = guihandles(hObject);
 jFrame=get(handle(handles.RCBaseGUI), 'javaframe');
 jicon=javax.swing.ImageIcon('D:\RotorControl\RotorControlProject\Resource\emp.jpg');
 jFrame.setFigureIcon(jicon);
-    
+
+setDefaultSliders(guihandles(hObject));
+set(handles.btn_animation, 'Visible', 'off');
+
 handles.output = hObject;
 
 % Update handles structure
 guidata(hObject, handles);
 
-
 % --- Outputs from this function are returned to the command line.
 function varargout = RCModulationGUI_OutputFcn(hObject, eventdata, handles) 
-% varargout  cell array for returning output args (see VARARGOUT);
-% hObject    handle to figure
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Get default command line output from handles structure
 varargout{1} = handles.output;
 
 function btn_cancel_Callback(hObject, eventdata, handles)
 close()
 
 function btn_clear_Callback(hObject, eventdata, handles)
+handle = guihandles(hObject);
 RCParameters = GetRCParameters();
 
 RCParameters.RotorPosition.alpha = 0.0;
@@ -81,101 +78,31 @@ RCParameters.RotorPosition.y     = 0.0;
 
 SetRCParameters(RCParameters);
 
+setDefaultSliders(handle);
+
 RCModulationGUIPushOfParameters(guihandles(hObject));
+
+set(handle.btn_animation, 'Visible', 'off');
 
 function btn_enter_Callback(hObject, eventdata, handles)
 handles = guihandles(hObject);
 
+RCStab = GetRCStabilisation();
 RCParameters = RCModulationGUIPullOfParameters(handles);
 
 [t, ksi] = RCStabilisation(RCParameters);
 
-showGraphRC(t, ksi);
+RCStab.vecT   = t;
+RCStab.vecKSI = ksi;
 
-%close()
+showGraphRC(RCStab.vecT, RCStab.vecKSI);
 
-% function edt_alpha_Callback(hObject, eventdata, handles)
-% % hObject    handle to edt_alpha (see GCBO)
-% % eventdata  reserved - to be defined in a future version of MATLAB
-% % handles    structure with handles and user data (see GUIDATA)
-% 
-% % Hints: get(hObject,'String') returns contents of edt_alpha as text
-% %        str2double(get(hObject,'String')) returns contents of edt_alpha as a double
+SetRCStabilisation(RCStab);
 
-% --- Executes during object creation, after setting all properties.
-function edt_alpha_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edt_alpha (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
+set(handles.btn_animation, 'Visible', 'on');
 
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-% 
-% function edt_beta_Callback(hObject, eventdata, handles)
-% % hObject    handle to edt_beta (see GCBO)
-% % eventdata  reserved - to be defined in a future version of MATLAB
-% % handles    structure with handles and user data (see GUIDATA)
-% 
-% % Hints: get(hObject,'String') returns contents of edt_beta as text
-% %        str2double(get(hObject,'String')) returns contents of edt_beta as a double
-
-% --- Executes during object creation, after setting all properties.
-function edt_beta_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edt_beta (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-% 
-% function edt_x_Callback(hObject, eventdata, handles)
-% % hObject    handle to edt_x (see GCBO)
-% % eventdata  reserved - to be defined in a future version of MATLAB
-% % handles    structure with handles and user data (see GUIDATA)
-% 
-% % Hints: get(hObject,'String') returns contents of edt_x as text
-% %        str2double(get(hObject,'String')) returns contents of edt_x as a double
-
-% % --- Executes during object creation, after setting all properties.
-function edt_x_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edt_x (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-% 
-% 
-% function edt_y_Callback(hObject, eventdata, handles)
-% % hObject    handle to edt_y (see GCBO)
-% % eventdata  reserved - to be defined in a future version of MATLAB
-% % handles    structure with handles and user data (see GUIDATA)
-% 
-% % Hints: get(hObject,'String') returns contents of edt_y as text
-% %        str2double(get(hObject,'String')) returns contents of edt_y as a double
-% 
-
-% --- Executes during object creation, after setting all properties.
-function edt_y_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edt_y (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
+function btn_animation_Callback(hObject, eventdata, handles)
+open('RCAnimationGUI.fig');
 
 function slider_alpha_Callback(hObject, eventdata, handles)
 warning('off');
@@ -183,10 +110,6 @@ warning('off');
 handles = guihandles(hObject);
 
 RCParameters = RCModulationGUIPullOfParameters(handles);
-
-%alpha = 0.00039;
-%x = 0.0005;
-%y = -0.0001;
 
 beta  = RCParameters.RotorPosition.beta;
 y     = RCParameters.RotorPosition.y;
@@ -203,9 +126,6 @@ syms A;
 inequality1 = strcat(num2str(l1, '%.10f'), '*A^2 - 2*A = ', num2str(partRight1, '%.10f'));
 inequality2 = strcat(num2str(l2, '%.10f'), '*A^2 + 2*A = ', num2str(partRight2, '%.10f'));
 
-t1 = solve(inequality1, A) * 1000.0;
-t2 = solve(inequality2, A) * 1000.0;
-
 alphaMin = radtodeg(double(min(solve(inequality1, A))) * 1000.0); %mDeg
 alphaMax = radtodeg(double(max(solve(inequality2, A))) * 1000.0); %mDeg
 
@@ -219,10 +139,6 @@ warning('off');
 handles = guihandles(hObject);
 
 RCParameters = RCModulationGUIPullOfParameters(handles);
-
-%alpha = -0.00049;
-%x = 0.0005;
-%y = -0.0001;
 
 alpha = RCParameters.RotorPosition.alpha;
 y     = RCParameters.RotorPosition.y;
@@ -244,103 +160,6 @@ betaMax = radtodeg(double(max(solve(inequality1, B))) * 1000.0); %mDeg
 
 RCParameters.RotorPosition.beta = setSliderForLabel(handles.slider_beta, handles.edt_beta, betaMin, betaMax);
 SetRCParameters(RCParameters);
-
-
-
-
-
-
-
-%RCParameters = GetRCParameters();
-
-%alpha = RCParameters.RotorPosition.alpha;
-%beta  = RCParameters.RotorPosition.beta;
-%x     = RCParameters.RotorPosition.x;
-%y     = RCParameters.RotorPosition.y;
-
-%l1 = RCParameters.SpecificModel.l1;
-%l2 = RCParameters.SpecificModel.l2;
-%S0 = RCParameters.SpecificModel.S0;
-
-%Yv = num2str((y - alpha*l1)^2, '%.10f');
-%Yl = num2str((y + alpha*l2)^2, '%.10f');
-%xv = x+beta*l1;
-%xl = x-beta*l2;
-
-%Yv = (y - alpha*l1);
-%Yl = (y + alpha*l2);
-
-%tmp1 = (S0^2 - (x^2 + Yv^2)) / l1;
-%tmp2 = (S0^2 - (x^2 + Yl^2)) / l2;
-
-%e_1 = strcat(num2str(l1, '%.10f'), '*b^2 + 2*b = ', num2str(tmp1, '%.10f'));
-%e_2 = strcat(num2str(l2, '%.10f'), '*b^2 - 2*b = ', num2str(tmp2, '%.10f'));
-
-%syms b;
-
-%tmp1 = solve(e_1, b);
-%tmp2 = solve(e_2, b);
-
-%Xv = strcat('(', num2str(x, '%.10f'), '+b*', num2str(l1, '%.10f'), ')^2');
-%Xl = strcat('(', num2str(x, '%.10f'), '-b*', num2str(l2, '%.10f'), ')^2');
-    
-%Xv = '(x + b*l1)^2';
-%Xl = '(x - b*l2)^2';
-
-%e1 = strcat(Xv, '+', Yv, '<=', num2str(S0^2, '%.10f')); 
-%e2 = strcat(Xl, '+', Yl, '<=', num2str(S0^2, '%.10f'));
-
-%e1 = strcat(Xv, '+', Yv, '<=S0^2');
-%e2 = strcat(Xl, '+', Yl, '<=S0^2');
-%e = strcat('[', e1, ',', e2, ']');
-
-
-
-
-%maple('solve','{x+3*y>=1, x+y>0, x+3*y<=1, x-y>=2}, {x,y}')
-
-%tmp = solve(e, b);
-
-
-%tempBeta = 2*x^2 + 2*y^2 + 2*alpha*(l2-l1) + alpha^2*(l1^2+l2^2);
-
-%tmpBeta = num2str(tempBeta, '%.10f');
-%tmpll = num2str((l1-l2), '%.10f');
-%tmpllSqr = num2str((l1^2+l2^2), '%.10f');
-
-%equationForMin = strcat('2*X*', tmpll, '+', 'X^2*', tmpllSqr, '-', num2str(S0^2), '-', tmpBeta, '=0');
-%equationForMax = strcat('2*X*', tmpll, '+', 'X^2*', tmpllSqr, '+', num2str(S0^2), '-', tmpBeta, '=0');
-
-%syms X;
-
-%xMin = solve(equationForMin, X);
-%xMax = solve(equationForMax, X);
-
-%betaMin = min(solve(equationForMin, X));
-%betaMax = max(solve(equationForMax, X));
-
-%handles = guihandles(hObject);
-%setSliderForLabel(handles.slider_y, handles.edt_y, betaMin, betaMax);
-
-%betaMin = solve('2*X*(l1-l2) + X^2*(l1^2-l2^2) + S0^2 + tempBeta = 0', X);
-%betaMin = subs(betaMin, {'l1', 'l2', 'S0', 'tempBeta'}, {l1, l2, S0, tempBeta});
-
-%syms beta;
-
-%betaMin = solve(equation, X);
-
-%betaMin = max(betaMin);
-%betaMin = solve('2*X*(l1-l2) + X^2*(l1^2-l2^2) + S0^2 + tempBeta = 0', X);
-
-
-%a = str2double(betaMin);
-
-%yMin = -sqrt(S0^2 + tempY) * 1000.0; %mm
-%yMax = sqrt(S0^2 - tempY) * 1000.0;  %mm
-
-%handles = guihandles(hObject);
-
-%setSliderForLabel(handles.slider_y, handles.edt_y, yMin, yMax);
 
 function slider_x_Callback(hObject, eventdata, handles)
 warning('off');
@@ -400,20 +219,11 @@ SetRCParameters(RCParameters);
 
 % --- Executes when user attempts to close RCBaseGUI.
 function RCModulationGUI_CloseRequestFcn(hObject, eventdata, handles)
-% hObject    handle to RCBaseGUI (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: delete(hObject) closes the figure
 delete(hObject);
 
 
 % --- Executes during object creation, after setting all properties.
 function RCModulationGUI_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to RCBaseGUI (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
 
 function [valueLabel] = setSliderForLabel(xSlider, xLabel, xMin, xMax)
 sliderValue = get(xSlider, 'Value');
@@ -431,38 +241,6 @@ if (sliderValue < xMin || sliderValue > xMax)
     set(xSlider, 'Value', sliderValue);
 end
 
-% ==== DEBUG ====
-RCParameters = GetRCParameters();
-alpha = RCParameters.RotorPosition.alpha;
-beta = RCParameters.RotorPosition.beta;
-
-y = RCParameters.RotorPosition.y;
-x = RCParameters.RotorPosition.x;
-
-%handles = guihandles(hObject);
-
-%x = str2double(get(handles.edt_x, 'String')) / 1000.0; %mm
-%y = str2double(get(handles.edt_y, 'String')) / 1000.0; %mm
-
-
-
-l1 = RCParameters.SpecificModel.l1;
-l2 = RCParameters.SpecificModel.l2;
-S0 = RCParameters.SpecificModel.S0;
-
-xv = x+beta*l1;
-xl = x-beta*l2;
-yv = y-alpha*l1;
-yl = y+alpha*l2;
-
-%if (xv^2 + yv^2 > S0^2) && (xl^2 + yl^2 > S0^2) 
-%    return;
-%end
-% ==== DEBUG ====
-
-
-sliderValue = get(xSlider, 'Value');
-
 set(xSlider, 'SliderStep', sliderStep);
 
 set(xSlider, 'Min', xMin);
@@ -474,4 +252,34 @@ set(xLabel, 'String', num2str(valueLabel, '%.2f'));
 
 valueLabel = valueLabel / 1000.0;
 
+function setDefaultSliders(handle)
+set(handle.slider_alpha, 'Value', 0);
+set(handle.slider_beta,  'Value', 0);
+set(handle.slider_x,     'Value', 0);
+set(handle.slider_y,     'Value', 0);
 
+
+% --- Executes during object creation, after setting all properties.
+function edt_alpha_CreateFcn(hObject, eventdata, handles)
+
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+% --- Executes during object creation, after setting all properties.
+function edt_beta_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+% % --- Executes during object creation, after setting all properties.
+function edt_x_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+% --- Executes during object creation, after setting all properties.
+function edt_y_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end

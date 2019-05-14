@@ -119,6 +119,5 @@ function [A, B, W, timeStab] = RCGetSystem(RCParameters)
     lambda = dec2mat(Rotor, xopt, 3);
 
     W = Z*Y^-1;
-    %timeStab = T * 100;
-    timeStab = T * 200;
+    timeStab = T * 100;
 end

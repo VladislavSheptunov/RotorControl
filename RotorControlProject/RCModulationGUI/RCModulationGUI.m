@@ -1,30 +1,4 @@
 function varargout = RCModulationGUI(varargin)
-% RCBASEGUI M-file for RCBaseGUI.fig
-%      RCBASEGUI, by itself, creates a new RCBASEGUI or raises the existing
-%      singleton*.
-%
-%      H = RCBASEGUI returns the handle to a new RCBASEGUI or the handle to
-%      the existing singleton*.
-%
-%      RCBASEGUI('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in RCBASEGUI.M with the given input arguments.
-%
-%      RCBASEGUI('Property','Value',...) creates a new RCBASEGUI or raises the
-%      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before RCBaseGUI_OpeningFcn gets called.  An
-%      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to RCBaseGUI_OpeningFcn via varargin.
-%
-%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
-%      instance to run (singleton)".
-%
-% See also: GUIDE, GUIDATA, GUIHANDLES
-
-% Edit the above text to modify the response to help RCBaseGUI
-
-% Last Modified by GUIDE v2.5 22-Jan-2019 19:22:53
-
-% Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
@@ -41,19 +15,21 @@ if nargout
 else
     gui_mainfcn(gui_State, varargin{:});
 end
-% End initialization code - DO NOT EDIT
 
 function RCModulationGUI_OpeningFcn(hObject, handles, varargin)
 warning('off','MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame');
     
 handles = guihandles(hObject);
 
-jFrame=get(handle(handles.RCBaseGUI), 'javaframe');
-jicon=javax.swing.ImageIcon('D:\RotorControl\RotorControlProject\Resource\emp.jpg');
+jFrame=get(handle(handles.RCModulationGUI), 'javaframe');
+jicon=javax.swing.ImageIcon('D:\RotorControl\RotorControlProject\Resource\emp_2.jpg');
 jFrame.setFigureIcon(jicon);
 
 setDefaultSliders(guihandles(hObject));
+
 set(handles.btn_animation, 'Visible', 'off');
+set(handles.edt_time_stab, 'Visible', 'off');
+set(handles.txt_time_stab, 'Visible', 'off');
 
 handles.output = hObject;
 
@@ -83,23 +59,31 @@ setDefaultSliders(handle);
 RCModulationGUIPushOfParameters(guihandles(hObject));
 
 set(handle.btn_animation, 'Visible', 'off');
+set(handle.edt_time_stab, 'Visible', 'off');
+set(handle.txt_time_stab, 'Visible', 'off');
 
 function btn_enter_Callback(hObject, eventdata, handles)
-handles = guihandles(hObject);
+handle = guihandles(hObject);
 
 RCStab = GetRCStabilisation();
-RCParameters = RCModulationGUIPullOfParameters(handles);
+RCParameters = RCModulationGUIPullOfParameters(handle);
 
 [t, ksi] = RCStabilisation(RCParameters);
 
 RCStab.vecT   = t;
 RCStab.vecKSI = ksi;
 
+RCTimeStab = GetRCTimeStabilisation(RCStab);
+
 showGraphRC(RCStab.vecT, RCStab.vecKSI);
+
+set(handle.edt_time_stab, 'String', num2str(RCTimeStab.time, '%.4f'));
 
 SetRCStabilisation(RCStab);
 
-set(handles.btn_animation, 'Visible', 'on');
+set(handle.btn_animation, 'Visible', 'on');
+set(handle.edt_time_stab, 'Visible', 'on');
+set(handle.txt_time_stab, 'Visible', 'on');
 
 function btn_animation_Callback(hObject, eventdata, handles)
 open('RCAnimationGUI.fig');
@@ -224,6 +208,22 @@ delete(hObject);
 
 % --- Executes during object creation, after setting all properties.
 function RCModulationGUI_CreateFcn(hObject, eventdata, handles)
+warning('off','MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame');
+
+handles = guihandles(hObject);
+
+%PATH = strcat(fileparts(mfilename('fullpath')), '..\Resource\emp.jpg');
+
+jFrame=get(handle(handles.RCModulationGUI), 'javaframe');
+jicon=javax.swing.ImageIcon('D:\RotorControl\RotorControlProject\Resource\emp.jpg');
+%jicon=javax.swing.ImageIcon(PATH);
+jFrame.setFigureIcon(jicon);
+
+setDefaultSliders(guihandles(hObject));
+
+set(handles.btn_animation, 'Visible', 'off');
+set(handles.edt_time_stab, 'Visible', 'off');
+set(handles.txt_time_stab, 'Visible', 'off');
 
 function [valueLabel] = setSliderForLabel(xSlider, xLabel, xMin, xMax)
 sliderValue = get(xSlider, 'Value');

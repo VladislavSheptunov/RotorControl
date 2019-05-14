@@ -1,30 +1,4 @@
 function varargout = RCAnimationGUI(varargin)
-% ROTOR_CONTROL_ANIMATION M-file for Rotor_control_animation.fig
-%      ROTOR_CONTROL_ANIMATION, by itself, creates a new ROTOR_CONTROL_ANIMATION or raises the existing
-%      singleton*.
-%
-%      H = ROTOR_CONTROL_ANIMATION returns the handle to a new ROTOR_CONTROL_ANIMATION or the handle to
-%      the existing singleton*.
-%
-%      ROTOR_CONTROL_ANIMATION('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in ROTOR_CONTROL_ANIMATION.M with the given input arguments.
-%
-%      ROTOR_CONTROL_ANIMATION('Property','Value',...) creates a new ROTOR_CONTROL_ANIMATION or raises the
-%      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before Rotor_control_animation_OpeningFcn gets called.  An
-%      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to Rotor_control_animation_OpeningFcn via varargin.
-%
-%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
-%      instance to run (singleton)".
-%
-% See also: GUIDE, GUIDATA, GUIHANDLES
-
-% Edit the above text to modify the response to help Rotor_control_animation
-
-% Last Modified by GUIDE v2.5 13-May-2019 20:59:51
-
-% Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
@@ -41,30 +15,39 @@ if nargout
 else
     gui_mainfcn(gui_State, varargin{:});
 end
-% End initialization code - DO NOT EDIT
 
-% --- Executes just before Rotor_control_animation is made visible.
 function RCAnimationGUI_OpeningFcn(hObject, eventdata, handles, varargin)
 
-% Choose default command line output for Rotor_control_animation
 handles.output = hObject;
 
-% Update handles structure
 guidata(hObject, handles);
 
 function varargout = RCAnimationGUI_OutputFcn(hObject, eventdata, handles) 
 varargout{1} = handles.output;
 
-% --- Executes during object creation, after setting all properties.
 function RCAnimationGUI_CreateFcn(hObject, eventdata, handles)
 % https://www.mathworks.com/help/vision/ref/insertshape.html#btppvxj-1-shape
 
-%handles = guihandles(hObject);
+warning('off','MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame');
+
+handles = guihandles(hObject);
+
+%PATH = strcat(fileparts(mfilename('fullpath')), '..\Resource\emp.jpg');
+
+jFrame=get(handle(handles.RCAnimationGUI), 'javaframe');
+jicon=javax.swing.ImageIcon('D:\RotorControl\RotorControlProject\Resource\emp.jpg');
+%jicon=javax.swing.ImageIcon(PATH);
+jFrame.setFigureIcon(jicon);
 
 RCParameters = GetRCParameters();
 RCStab = GetRCStabilisation();
+RCTimeStab = GetRCTimeStabilisation(RCStab);
 
+if RCTimeStab.index > 0
+ksi = RCStab.vecKSI(1:RCTimeStab.index, :);
+else
 ksi = RCStab.vecKSI;
+end
 
 masxv = 1:length(ksi);
 masyv = 1:length(ksi);
@@ -85,11 +68,12 @@ centerY = 316;
 centerR = 170;
 
 DELAY = 0.005;
+st = 10^4.3;
 
 for i = 1:length(ksi)
 
-tmpX = centerX + masxv(i) * 10^4;
-tmpY = centerY + masyv(i) * 10^4;
+tmpX = centerX + masxv(i) * st;
+tmpY = centerY + masyv(i) * st;
 
 RGB = insertShape(Im, 'FilledCircle', [tmpX tmpY centerR], 'LineWidth', 15, 'Color', [0.5 0.5 0.5]);
 
@@ -97,26 +81,3 @@ imshow(RGB);
 
 pause(DELAY);
 end
-
-% for i = 1:length(ksi)
-%     clf;
-%     
-%     for j=0:360 
-%         x1 = [x1 x0+r*cos(j/180*pi)]; 
-%         y1 = [y1 y0+r*sin(j/180*pi)]; 
-%     end
-%     
-%     plot(x1,y1,'k','LineWidth',8);
-%     axis equal
-%     axis ([-0.0027 0.0027 -0.0027 0.0027])
-% 
-%     title('The inner ring of the upper EMP');
-%     hold on
-% 
-%     plot(masxv(i),masyv(i),'ko','MarkerSize',255,'MarkerFaceColor',[0.5 0.5 0.5]);
-%     axis off
-%         
-%     pause(DELAY);
-% end
-
-% close(handles.rc_animation_gui);

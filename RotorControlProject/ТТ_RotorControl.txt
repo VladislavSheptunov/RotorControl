@@ -1,0 +1,52 @@
+Что нужно?
+
+1. Разбить на два окна.
+    В перевом окнке задаются константные параметры системы.
+    Во втором оне ползунком выбираются отклонения координат ползунком
+    Тем самым Exeption не нужен. Ограничиваем пользователя.
+2. Реализовать вкладку About. Ответить на вопросы: Зачем нужно? Как пользоваться?
+3. Icon приложения.
+4. Оставить на графике 4 параметра (x, y, alpha, beta).
+5. Выводить время стабилизации на втором окне.
+
+
+// ==================== Example ==================== //
+
+// -- Пример для кнопки:
+Для доступа кэлементу массива использовать (). Примерр array(index).
+
+function Untitled1
+figure
+hax = axes('Units','pixels');
+surf(hax, peaks)
+cd = imread('rt.jpg');
+cd = imresize(cd, [30, 30]);
+hPB = uicontrol('Style', 'pushbutton', 'position',[10 10 30 30],...
+    'Callback', @pbcb);
+set(hPB, 'CData', cd)
+n = 0;
+    function pbcb(src,~)
+        view(gca, [30 n])
+        n = n+10;
+    end
+
+// --
+
+// -- Пример для изменение иконки приложения:
+
+// https://www.mathworks.com/matlabcentral/answers/7313-change-guide-icon
+
+function deneme_deneme_OpeningFcn(hObject, eventdata, handles, varargin)
+    jFrame=get(handles.figure1,'javaframe');  
+    jicon=javax.swing.ImageIcon('icon.gif');
+    jFrame.setFigureIcon(jicon);
+    handles.output = hObject;
+    guidata(hObject, handles);
+
+function DetectSound_OpeningFcn(hObject, eventdata, handles, varargin)
+    warning('off','MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame');
+    jFrame=get(handle(handles.figure1), 'javaframe');
+    jicon=javax.swing.ImageIcon('icon.gif');
+    jFrame.setFigureIcon(jicon);
+
+// --

@@ -4,12 +4,12 @@
     <param.icon />
     <param.icons />
     <param.version>1.0</param.version>
-    <param.authnamewatermark>Vladislav</param.authnamewatermark>
-    <param.email />
+    <param.authnamewatermark>Vladislav Sheptunov</param.authnamewatermark>
+    <param.email>sheptunov.vld@gmail.com</param.email>
     <param.company />
     <param.summary />
     <param.description />
-    <param.screenshot />
+    <param.screenshot>D:\RotorControl\RotorControlProject\Resource\GeneralEMP.jpg</param.screenshot>
     <param.guid />
     <param.installpath.string>\RotorControl\</param.installpath.string>
     <param.installpath.combo>option.installpath.programfiles</param.installpath.combo>
@@ -37,11 +37,9 @@
       <param.icon />
       <param.icons />
       <param.version />
-      <param.email />
       <param.company />
       <param.summary />
       <param.description />
-      <param.screenshot />
       <param.guid />
       <param.installpath.string />
       <param.installpath.combo />
@@ -66,13 +64,35 @@
       <param.log.file />
     </unset>
     <fileset.main>
-      <file>D:\RotorControl\RotorControlProject\RCBaseGUI.m</file>
+      <file>D:\RotorControl\RotorControlProject\RCBaseGUI\RCBaseGUI.m</file>
     </fileset.main>
     <fileset.resources>
-      <file>D:\RotorControl\RotorControlProject\RCBaseGUI.fig</file>
+      <file>D:\RotorControl\RotorControlProject\Algorithm\Function\decoder.m</file>
+      <file>D:\RotorControl\RotorControlProject\Algorithm\Function\getrotor.m</file>
+      <file>D:\RotorControl\RotorControlProject\Algorithm\Function\showGraphRC.m</file>
+      <file>D:\RotorControl\RotorControlProject\Algorithm\Function\valrot.m</file>
+      <file>D:\RotorControl\RotorControlProject\Algorithm\GetRCStabilisation.m</file>
+      <file>D:\RotorControl\RotorControlProject\Algorithm\GetRCTimeStabilisation.m</file>
+      <file>D:\RotorControl\RotorControlProject\Algorithm\RCGetSystem.m</file>
+      <file>D:\RotorControl\RotorControlProject\Algorithm\RCStabilisation.m</file>
+      <file>D:\RotorControl\RotorControlProject\Algorithm\SetRCStabilisation.m</file>
+      <file>D:\RotorControl\RotorControlProject\RCAboutGUI\RCAboutGUI.m</file>
+      <file>D:\RotorControl\RotorControlProject\RCAnimationGUI\RCAnimationGUI.fig</file>
+      <file>D:\RotorControl\RotorControlProject\RCAnimationGUI\RCAnimationGUI.m</file>
+      <file>D:\RotorControl\RotorControlProject\RCBaseGUI\RCBaseGUI.fig</file>
+      <file>D:\RotorControl\RotorControlProject\RCBaseGUI\RCBaseGUIPullOfParameters.m</file>
+      <file>D:\RotorControl\RotorControlProject\RCBaseGUI\RCBaseGUIPushOfParameters.m</file>
+      <file>D:\RotorControl\RotorControlProject\RCModulationGUI\GetRCParameters.m</file>
+      <file>D:\RotorControl\RotorControlProject\RCModulationGUI\RCModulationGUI.fig</file>
+      <file>D:\RotorControl\RotorControlProject\RCModulationGUI\RCModulationGUI.m</file>
+      <file>D:\RotorControl\RotorControlProject\RCModulationGUI\RCModulationGUIPullOfParameters.m</file>
+      <file>D:\RotorControl\RotorControlProject\RCModulationGUI\RCModulationGUIPushOfParameters.m</file>
+      <file>D:\RotorControl\RotorControlProject\RCModulationGUI\SetRCParameters.m</file>
     </fileset.resources>
     <fileset.package />
-    <fileset.depfun />
+    <fileset.depfun>
+      <file>D:\RotorControl\RotorControlProject\RCAboutGUI\RCAboutGUI.fig</file>
+    </fileset.depfun>
     <build-deliverables>
       <file location="${PROJECT_ROOT}\RotorControl\for_testing" name="RotorControl.exe" optional="false">D:\RotorControl\RotorControlProject\Deployment\RotorControl\for_testing\RotorControl.exe</file>
       <file location="${PROJECT_ROOT}\RotorControl\for_testing" name="readme.txt" optional="true">D:\RotorControl\RotorControlProject\Deployment\RotorControl\for_testing\readme.txt</file>
